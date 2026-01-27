@@ -4,7 +4,7 @@ from typing import List, Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .models import Event, OffDay, Task
+from .models import Event, MeetingAudio, MeetingStatus, OffDay, Task
 from .schemas import EventCreate, TaskCreate, TaskUpdate
 
 
@@ -73,3 +73,48 @@ async def events_for_day(session: AsyncSession, day: date):
         select(Event).where(Event.start_time >= start).where(Event.end_time <= end)
     )
     return result.scalars().all()
+
+
+# Meeting audio CRUD
+async def create_meeting_audio(session: AsyncSession, *, title: str, source: str | None, file_path: str) -> MeetingAudio:
+    meeting = MeetingAudio(title=title, source=source, file_path=file_path, status=MeetingStatus.pending)
+    session.add(meeting)
+    await session.commit()
+    await session.refresh(meeting)
+    return meeting
+
+
+async def get_meeting_audio(session: AsyncSession, meeting_id: int) -> MeetingAudio | None:
+    res = await session.execute(select(MeetingAudio).where(MeetingAudio.id == meeting_id))
+    return res.scalar_one_or_none()
+
+
+async def update_meeting_audio(
+    session: AsyncSession,
+    meeting: MeetingAudio,
+    *,
+    status: MeetingStatus | None = None,
+    transcript: str | None = None,
+    summary: str | None = None,
+    action_items: list[str] | None = None,
+    error: str | None = None,
+) -> MeetingAudio:
+    if status:
+        meeting.status = status
+    if transcript is not None:
+        meeting.transcript = transcript
+    if summary is not None:
+        meeting.summary = summary
+    if action_items is not None:
+        meeting.action_items = action_items
+    if error is not None:
+        meeting.error = error
+    session.add(meeting)
+    await session.commit()
+    await session.refresh(meeting)
+    return meeting
+
+
+async def list_meeting_audios(session: AsyncSession, limit: int = 20) -> list[MeetingAudio]:
+    res = await session.execute(select(MeetingAudio).order_by(MeetingAudio.created_at.desc()).limit(limit))
+    return res.scalars().all()

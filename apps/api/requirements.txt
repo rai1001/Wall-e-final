@@ -7,4 +7,7 @@ aiosqlite==0.19.0
 alembic==1.13.1
 # Pydantic 2.12.5 ships pydantic-core 2.41.x con cp313 wheels (Python 3.13).
 pydantic==2.12.5
+pydantic-settings==2.6.1
 python-dotenv==1.0.1
+google-genai==0.5.0
+python-multipart==0.0.9

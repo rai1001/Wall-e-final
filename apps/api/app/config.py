@@ -1,4 +1,4 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     api_port: int = 8000
     database_url: str = "sqlite+aiosqlite:///./walle.db"
     redis_url: str = "redis://localhost:6379/0"
+    gemini_api_key: str | None = None
 
     class Config:
         env_file = ".env"

@@ -16,6 +16,11 @@ class TaskStatus(str, enum.Enum):
     in_progress = "in_progress"
     done = "done"
 
+class MeetingStatus(str, enum.Enum):
+    pending = "pending"
+    transcribed = "transcribed"
+    failed = "failed"
+
 
 class Task(Base):
     __tablename__ = "tasks"
@@ -50,3 +55,19 @@ class OffDay(Base):
     id = Column(Integer, primary_key=True)
     date = Column(Date, nullable=False, unique=True)
     reason = Column(String(255), nullable=True)
+
+
+class MeetingAudio(Base):
+    __tablename__ = "meeting_audios"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(255), nullable=False)
+    source = Column(String(50), nullable=True)  # e.g. upload/mic/link
+    file_path = Column(String(512), nullable=False)
+    status = Column(Enum(MeetingStatus), nullable=False, default=MeetingStatus.pending)
+    transcript = Column(String, nullable=True)
+    summary = Column(String, nullable=True)
+    action_items = Column(JSON, nullable=True)
+    error = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)

@@ -35,3 +35,7 @@ Thumbs.db
 
 # alembic
 apps/api/alembic/versions/*.pyc
+
+# local db / temp audio
+apps/api/walle.db
+apps/api/temp/

@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .models import Priority, TaskStatus
+from .models import Priority, TaskStatus, MeetingStatus
 
 
 class TaskBase(BaseModel):
@@ -83,3 +83,23 @@ class PlanTodayResponse(BaseModel):
     date: str
     suggestion: str
     plans: list[PlanBlock]
+
+
+class MeetingUploadResponse(BaseModel):
+    id: int
+    status: MeetingStatus
+
+
+class MeetingRead(BaseModel):
+    id: int
+    title: str
+    source: Optional[str] = None
+    status: MeetingStatus
+    transcript: Optional[str] = None
+    summary: Optional[str] = None
+    action_items: Optional[list[str]] = None
+    error: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)

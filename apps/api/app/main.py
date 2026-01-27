@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.db import Base, engine, get_session
-from app.routers import briefing, calendar, health, plan, tasks
+from app.routers import briefing, calendar, health, plan, tasks, meetings
 
 
 @asynccontextmanager
@@ -32,6 +32,7 @@ def create_app() -> FastAPI:
     app.include_router(calendar.router)
     app.include_router(briefing.router)
     app.include_router(plan.router)
+    app.include_router(meetings.router)
 
     return app
 
